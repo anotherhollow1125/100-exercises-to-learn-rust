@@ -17,7 +17,8 @@ use num::Num;
 use std::collections::HashMap;
 use std::hash::Hash;
 
-fn power_inner<N>(n: N, e: u32) -> N
+// キャッシュ要らなかったかも
+fn power_inner<N>(n: N, e: u32, memo: &mut HashMap<(N, u32), N>) -> N
 where
     N: Num + Hash + Eq + Clone + Copy + std::fmt::Debug,
 {
@@ -29,10 +30,18 @@ where
         return n;
     }
 
-    let vv = power_inner(n, e / 2);
+    if let Some(v) = memo.get(&(n, e)) {
+        eprintln!("HIT!: {:?}", v);
+        return *v;
+    }
+
+    let vv = power_inner(n, e / 2, memo);
 
     let v = vv * vv * if e % 2 == 0 { N::one() } else { n };
 
+    eprintln!("v: {:?}", v);
+
+    memo.insert((n, e), v);
     v
 }
 
@@ -44,7 +53,9 @@ macro_rules! power_impl {
     ( $(($t:ty, $r:ty))* ) => {$(
         impl Power<$r> for $t {
             fn power(self, rhs: $r) -> Self {
-                power_inner(self, rhs.clone().into())
+                let mut memo = HashMap::new();
+
+                power_inner(self, rhs.clone().into(), &mut memo)
             }
         }
     )*}

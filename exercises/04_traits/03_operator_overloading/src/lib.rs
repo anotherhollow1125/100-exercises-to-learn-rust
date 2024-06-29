@@ -8,7 +8,16 @@ struct Ticket {
 
 // TODO: Implement the `PartialEq` trait for `Ticket`.
 
-impl PartialEq for Ticket {}
+// その次の04_deriveの最初にてlet Ticket { .. } = self;で分解する手法が紹介されている
+// 記事の方ではこっちの問題で紹介したいかも...？(多分同じ回なのでその中で紹介すればいいか)
+
+impl PartialEq for Ticket {
+    fn eq(&self, other: &Self) -> bool {
+        self.title == other.title
+            && self.description == other.description
+            && self.status == other.status
+    }
+}
 
 #[cfg(test)]
 mod tests {

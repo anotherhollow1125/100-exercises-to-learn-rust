@@ -6,10 +6,31 @@
 // collections (e.g. BTreeMap).
 
 /// Return the minimum of two values.
-pub fn min<T>(left: T, right: T) -> T {
+pub fn min<T: PartialOrd>(left: T, right: T) -> T {
     if left <= right {
         left
     } else {
         right
     }
 }
+
+/*
+   Compiling trait_bounds v0.1.0 (/home/namn/100-exercises-to-learn-rust/exercises/04_traits/05_trait_bounds)
+error[E0369]: binary operation `<=` cannot be applied to type `T`
+  --> exercises/04_traits/05_trait_bounds/src/lib.rs:10:13
+   |
+10 |     if left <= right {
+   |        ---- ^^ ----- T
+   |        |
+   |        T
+   |
+help: consider restricting type parameter `T`
+   |
+9  | pub fn min<T: std::cmp::PartialOrd>(left: T, right: T) -> T {
+   |             ++++++++++++++++++++++
+
+For more information about this error, try `rustc --explain E0369`.
+error: could not compile `trait_bounds` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `trait_bounds` (lib test) due to 1 previous error
+*/

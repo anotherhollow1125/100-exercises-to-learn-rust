@@ -11,6 +11,7 @@ fn test_saturating_u16() {
     assert_eq!(a + c, SaturatingU16::from(u16::MAX));
     assert_eq!(a + d, SaturatingU16::from(11u16));
     assert_eq!(a + a, 20u16);
+    assert_eq!(a + &b, 15u16); // 追加
     assert_eq!(a + 5u16, 15u16);
     assert_eq!(a + &u16::MAX, SaturatingU16::from(u16::MAX));
 }

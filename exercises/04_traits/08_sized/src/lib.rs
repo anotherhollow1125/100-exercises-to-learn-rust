@@ -3,5 +3,9 @@ pub fn example() {
     // via `std::mem::size_of` will result in a compile-time error.
     //
     // TODO: Comment out the following line and move on to the next exercise.
-    std::mem::size_of::<str>();
+    // std::mem::size_of::<str>();
+    // std::mem::size_of::<[usize]>();
+    std::mem::size_of::<&str>();
+    std::mem::size_of::<&[usize]>();
+    std::mem::size_of::<[usize; 3]>();
 }
