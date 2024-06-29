@@ -13,7 +13,8 @@ mod tests {
 
     #[test]
     fn string_size() {
-        assert_eq!(size_of::<String>(), todo!());
+        // 64bit = 8 byte OS, so usize's size is 8 byte and Strings's one is 8 * 3 = 24
+        assert_eq!(size_of::<String>(), 24);
     }
 
     #[test]
@@ -23,6 +24,7 @@ mod tests {
         // but, in general, the memory layout of structs is a more complex topic.
         // If you're curious, check out the "Data layout" section of the Rustonomicon
         // https://doc.rust-lang.org/nomicon/data.html for more information.
-        assert_eq!(size_of::<Ticket>(), todo!());
+        // intuitive: 24 * 3 = 72
+        assert_eq!(size_of::<Ticket>(), 72);
     }
 }
