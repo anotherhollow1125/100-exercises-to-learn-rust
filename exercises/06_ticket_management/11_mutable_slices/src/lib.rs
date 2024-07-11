@@ -2,6 +2,16 @@
 //  modifying the input in place.
 //  Does it need to take a `&mut String`? Does a `&mut str` work? Why or why not?
 
+// Answer:
+// &mut str has `make_ascii_lowercase`, so we can take a &mut str argument.
+// However, static string literal can't take mutable reference, so `&mut String` is enough for this purpose in many cases.
+// In this exercise, test case calls `as_mut_str` method so I need to take the `&mut str` argument.
+
+fn lowercase(s: &mut str) {
+    // fn lowercase(s: &mut String) {
+    s.make_ascii_lowercase();
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -1,5 +1,7 @@
 use ticket_fields::{TicketDescription, TicketTitle};
 
+// ここより前までの演習を含め、forループはIntoIteratorとloopの組み合わせに過ぎないというのはすごいわかりやすいかも
+
 // TODO: Provide an `iter` method that returns an iterator over `&Ticket` items.
 #[derive(Clone)]
 pub struct TicketStore {
@@ -29,6 +31,11 @@ impl TicketStore {
 
     pub fn add_ticket(&mut self, ticket: Ticket) {
         self.tickets.push(ticket);
+    }
+
+    // pub fn iter(&self) -> impl Iterator<Item = &Ticket> {
+    pub fn iter(&self) -> std::slice::Iter<'_, Ticket> {
+        self.tickets.iter()
     }
 }
 

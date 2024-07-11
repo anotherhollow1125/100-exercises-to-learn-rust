@@ -1,9 +1,27 @@
 use ticket_fields::{TicketDescription, TicketTitle};
 
+// Lifetimeここで登場させるの中々にロックだな...
+// もとい、意識しなくてもここまで来れるんだよってメッセージなんだと解釈
+// ぶっちゃけジェネリクスみたいな雰囲気でいきなり紹介してくるTRPLよりわかりやすいかも...
+
+// 遊んでみた
+// https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=835fc4daddf05918b57779df61b6e73\8
+
 // TODO: Implement the `IntoIterator` trait for `&TicketStore` so that the test compiles and passes.
 #[derive(Clone)]
 pub struct TicketStore {
     tickets: Vec<Ticket>,
+}
+
+// 今回はLifetime elisionが効かないパターンらしい
+
+impl<'a> IntoIterator for &'a TicketStore {
+    type Item = &'a Ticket;
+    type IntoIter = std::slice::Iter<'a, Ticket>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.tickets.iter()
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
