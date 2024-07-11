@@ -11,6 +11,12 @@ pub enum TicketTitleError {
     TooLong,
 }
 
+impl From<TicketTitle> for String {
+    fn from(value: TicketTitle) -> Self {
+        value.0
+    }
+}
+
 impl TryFrom<String> for TicketTitle {
     type Error = TicketTitleError;
 

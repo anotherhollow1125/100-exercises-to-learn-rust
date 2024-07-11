@@ -1,0 +1,30 @@
+GET http://localhost:3000/tickets HTTP/1.1
+
+###
+
+GET http://localhost:3000/tickets/id/01909da5-83e1-7e03-b5f9-29b5ad47d77f HTTP/1.1
+
+###
+
+POST http://localhost:3000/tickets/create HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "Hello, Ticket!",
+    "description": "Hoge Fuga Bar Baz............"
+}
+
+###
+
+POST http://localhost:3000/tickets/update HTTP/1.1
+Content-Type: application/json
+
+{
+    "id": "",
+    "version": "",
+    "title": "",
+    "description": "",
+    "status": "",
+}
+
+###
