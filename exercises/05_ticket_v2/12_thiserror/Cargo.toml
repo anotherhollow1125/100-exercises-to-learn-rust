@@ -3,7 +3,12 @@ name = "thiserror_"
 version = "0.1.0"
 edition = "2021"
 
+# ```
+# cargo add thiserror
+# ```
+
 [dependencies]
+thiserror = "1.0.61"
 
 [dev-dependencies]
 common = { path = "../../../helpers/common" }
