@@ -14,8 +14,86 @@
 // this is necessary in the next exercise.
 use std::thread;
 
-pub fn sum(v: Vec<i32>) -> i32 {
-    todo!()
+pub fn _sum_ng(mut v: Vec<i32>) -> i32 {
+    // let v2 = v.split_off(v.len() / 2);
+    // Clone トレイトを要求しないバージョン↓
+    let v2 = v.drain((v.len() / 2)..).collect();
+
+    vec![v, v2]
+        .into_iter()
+        .map(|v| thread::spawn(move || v.iter().sum::<i32>()))
+        .map(|handle| handle.join().unwrap())
+        .sum()
+}
+
+pub fn _sum_ng_jikken(mut v: Vec<i32>) -> i32 {
+    // let v2 = v.split_off(v.len() / 2);
+    // Clone トレイトを要求しないバージョン↓
+    let v2 = v.drain((v.len() / 2)..).collect();
+
+    vec![v, v2]
+        .into_iter()
+        .enumerate()
+        .map(|(i, v)| {
+            thread::spawn(move || {
+                let mut s = 0;
+
+                for (j, n) in v.into_iter().enumerate() {
+                    s += n;
+
+                    if j % 100 == 0 {
+                        eprintln!("thread {} : {} (sum: {})", i + 1, n, s);
+                    }
+                }
+
+                s
+            })
+        })
+        .map(|handle| handle.join().unwrap())
+        .sum()
+}
+
+pub fn _sum(mut v: Vec<i32>) -> i32 {
+    // let v2 = v.split_off(v.len() / 2);
+    // Clone トレイトを要求しないバージョン↓
+    let v2 = v.drain((v.len() / 2)..).collect();
+
+    vec![v, v2]
+        .into_iter()
+        .map(|v| thread::spawn(move || v.iter().sum::<i32>()))
+        .collect::<Vec<_>>()
+        .into_iter()
+        .map(|handle| handle.join().unwrap())
+        .sum()
+}
+
+pub fn sum(mut v: Vec<i32>) -> i32 {
+    // let v2 = v.split_off(v.len() / 2);
+    // Clone トレイトを要求しないバージョン↓
+    let v2 = v.drain((v.len() / 2)..).collect();
+
+    vec![v, v2]
+        .into_iter()
+        .enumerate()
+        .map(|(i, v)| {
+            thread::spawn(move || {
+                let mut s = 0;
+
+                for (j, n) in v.into_iter().enumerate() {
+                    s += n;
+
+                    if j % 100 == 0 {
+                        eprintln!("thread {} : {} (sum: {})", i + 1, n, s);
+                    }
+                }
+
+                s
+            })
+        })
+        .collect::<Vec<_>>()
+        .into_iter()
+        .map(|handle| handle.join().unwrap())
+        .sum()
 }
 
 #[cfg(test)]
@@ -45,5 +123,13 @@ mod tests {
     #[test]
     fn ten() {
         assert_eq!(sum(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), 55);
+    }
+
+    #[test]
+    fn too_big_sum() {
+        let v = (0..10000).collect::<Vec<i32>>();
+        let vv = v.clone();
+
+        assert_eq!(sum(v), vv.iter().sum())
     }
 }

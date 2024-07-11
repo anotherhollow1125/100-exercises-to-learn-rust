@@ -7,7 +7,7 @@ use without_channels::store::TicketStore;
 
 #[test]
 fn works() {
-    let store = todo!();
+    let store = Arc::new(RwLock::new(TicketStore::new()));
 
     let store1 = store.clone();
     let client1 = spawn(move || {
@@ -37,4 +37,6 @@ fn works() {
 
     let ticket2 = reader.get(ticket_id2).unwrap();
     assert_eq!(ticket_id2, ticket2.read().unwrap().id);
+
+    // Patchパターン (storeは読み取りモードで、個別のチケットだけ修飾する場合) は確かめないの...？それを見たいのではなくて？
 }
