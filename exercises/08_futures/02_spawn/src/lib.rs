@@ -1,10 +1,27 @@
 use tokio::net::TcpListener;
 
+// 模範解答 (https://github.com/mainmatter/100-exercises-to-learn-rust/blob/solutions/exercises/08_futures/02_spawn/src/lib.rs) とエラーハンドリングの方法が異なる
+// 正直この辺はBookを見てもベストプラクティスがわからない...中途半端にunwrapするぐらいならいっそ全部そうしてしまったほうがシンプルな気がする。
+// どれが絶対に失敗しない処理で、どれが気をつけなければならない処理かがわかれば悩む必要ないかもだけど、それも今回はわからない...
+
 // TODO: write an echo server that accepts TCP connections on two listeners, concurrently.
 //  Multiple connections (on the same listeners) should be processed concurrently.
 //  The received data should be echoed back to the client.
 pub async fn echoes(first: TcpListener, second: TcpListener) -> Result<(), anyhow::Error> {
-    todo!()
+    tokio::spawn(echo(first));
+    tokio::spawn(echo(second));
+
+    Ok(())
+}
+
+async fn echo(listener: TcpListener) {
+    loop {
+        let (mut socket, _) = listener.accept().await.unwrap();
+        tokio::spawn(async move {
+            let (mut reader, mut writer) = socket.split();
+            tokio::io::copy(&mut reader, &mut writer).await.unwrap();
+        });
+    }
 }
 
 #[cfg(test)]

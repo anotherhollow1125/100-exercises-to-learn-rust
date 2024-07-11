@@ -5,14 +5,25 @@
 use std::io::{Read, Write};
 use tokio::net::TcpListener;
 
+// ブロックしちゃう場合エラーになってくれた気がするけどどういうシーンだったか思い出せず...
+// https://docs.rs/tokio/latest/tokio/sync/mpsc/struct.Receiver.html#method.blocking_recv
+// ↑ こいつかな
+// https://docs.rs/tokio/latest/tokio/sync/mpsc/struct.Receiver.html#panics
+// にてパニック条件に非同期ランタイムへの言及がある
+
 pub async fn echo(listener: TcpListener) -> Result<(), anyhow::Error> {
     loop {
         let (socket, _) = listener.accept().await?;
-        let mut socket = socket.into_std()?;
-        socket.set_nonblocking(false)?;
-        let mut buffer = Vec::new();
-        socket.read_to_end(&mut buffer)?;
-        socket.write_all(&buffer)?;
+
+        tokio::task::spawn_blocking(|| -> anyhow::Result<()> {
+            let mut socket = socket.into_std()?;
+            socket.set_nonblocking(false)?;
+            let mut buffer = Vec::new();
+            socket.read_to_end(&mut buffer)?;
+            socket.write_all(&buffer)?;
+
+            Ok(())
+        });
     }
 }
 

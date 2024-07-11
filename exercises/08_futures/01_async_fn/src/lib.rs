@@ -10,8 +10,31 @@ use tokio::net::TcpListener;
 // - `tokio::net::TcpListener::accept` to process the next incoming connection
 // - `tokio::net::TcpStream::split` to obtain a reader and a writer from the socket
 // - `tokio::io::copy` to copy data from the reader to the writer
+
+/*
 pub async fn echo(listener: TcpListener) -> Result<(), anyhow::Error> {
-    todo!()
+    loop {
+        match listener.accept().await {
+            Ok((mut socket, _)) => {
+                let (mut reader, mut writer) = socket.split();
+                let res = tokio::io::copy(&mut reader, &mut writer).await;
+                if let Err(e) = res {
+                    eprintln!("Error@copy: {:?}", e)
+                }
+            }
+            Err(e) => eprintln!("Error@accept: {:?}", e),
+        }
+    }
+}
+*/
+
+// せっかくanyhow::Error導入してくれてるんだから使っていいじゃん
+pub async fn echo(listener: TcpListener) -> Result<(), anyhow::Error> {
+    loop {
+        let (mut socket, _) = listener.accept().await?;
+        let (mut reader, mut writer) = socket.split();
+        tokio::io::copy(&mut reader, &mut writer).await?;
+    }
 }
 
 #[cfg(test)]

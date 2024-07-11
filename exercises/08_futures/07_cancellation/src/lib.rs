@@ -9,6 +9,8 @@ pub async fn run(listener: TcpListener, n_messages: usize, timeout: Duration) ->
     for _ in 0..n_messages {
         let (mut stream, _) = listener.accept().await.unwrap();
         let _ = tokio::time::timeout(timeout, async {
+            // 最初を受け取ったところで中のawaitがyieldする
+            // そしてタイムアウトするので、前半だけ残る
             stream.read_to_end(&mut buffer).await.unwrap();
         })
         .await;
@@ -29,11 +31,15 @@ mod tests {
         let timeout = Duration::from_millis(20);
         let handle = tokio::spawn(run(listener, messages.len(), timeout.clone()));
 
+        let mut answer = String::new();
+
         for message in messages {
             let mut socket = tokio::net::TcpStream::connect(addr).await.unwrap();
             let (_, mut writer) = socket.split();
 
             let (beginning, end) = message.split_at(message.len() / 2);
+
+            answer = format!("{}{}", answer, beginning); // メソッド調べるの面倒くさかった。どうせ変わらん
 
             // Send first half
             writer.write_all(beginning.as_bytes()).await.unwrap();
@@ -46,6 +52,6 @@ mod tests {
 
         let buffered = handle.await.unwrap();
         let buffered = std::str::from_utf8(&buffered).unwrap();
-        assert_eq!(buffered, "");
+        assert_eq!(buffered, &answer);
     }
 }
